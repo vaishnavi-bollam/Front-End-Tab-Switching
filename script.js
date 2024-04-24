@@ -50,9 +50,9 @@ function displayTabs(data) {
                 tabButton.style.backgroundColor = "black";
                 tabButton.style.color = "white";
             } else if (category.category_name === "Women") {
-                iconSource = "vectorWomen.png";
+                iconSource = "vectorwomen.png";
             } else {
-                iconSource = "VectorKids.png";
+                iconSource = "Vectorkids.png";
             }
             icon.src = iconSource;
             tabButton.prepend(icon);
@@ -86,6 +86,16 @@ function badgeCalc(badge_text) {
     }
 }
 
+function secondImage(second_image, image, title) {
+    if (second_image === "empty") {
+        return `<img class="product-image" alt="${title}" src="${image}" style="display: none;">`;
+    } else {
+        
+        return `<img class="product-image" alt="${title}" src="${second_image}" style="display: none;">`;
+    }
+}
+
+
 function displayData(selectedCategoryProducts) {
     const dataContainer = document.getElementById("data");
     dataContainer.innerHTML = ""; 
@@ -100,17 +110,20 @@ function displayData(selectedCategoryProducts) {
     category.forEach(product => {
         const productItemElement = document.createElement("li");
         productItemElement.classList.add("product-item");
-
+{/* <p class="product-title">${product.title}</p> */}
         productItemElement.innerHTML = `
             <div class="carousel">
                 <div class="image-container">
                     <img class="product-image" src="${product.image}" alt="${product.title}">
-                    <img class="product-image" src="${product.second_image}" alt="${product.title}" style="display: none;">
+                    ${secondImage(product.second_image, product.image, product.title)}
                     ${badgeCalc(product.badge_text)}
                 </div>
 
                 <div class="title">
-                    <p class="product-title">${product.title}</p>
+                    
+                   
+                    <p class="product-title" data-title="${product.title}">${product.title}</p>
+
                     <p class="dot"> &#8226</p>
                     <p>${product.vendor}</p>
                 </div>
@@ -127,17 +140,24 @@ function displayData(selectedCategoryProducts) {
     categoryElement.appendChild(productListElement);
     dataContainer.appendChild(categoryElement);
   
-   
+    
     const carousels = document.querySelectorAll('.carousel');
     carousels.forEach(carousel => {
         const images = carousel.querySelectorAll('.image-container img');
         let currentImageIndex = 0;
+        let timer; 
+
+        
         const nextImage = () => {
             images[currentImageIndex].style.display = 'none';
             currentImageIndex = (currentImageIndex + 1) % images.length;
             images[currentImageIndex].style.display = 'block';
+            timer = setTimeout(nextImage, 3000); 
         };
-        setInterval(nextImage, 3000); 
+
+        nextImage(); 
+        carousel.addEventListener('mouseenter', () => clearInterval(timer));
+        
+        carousel.addEventListener('mouseleave', nextImage);
     });
 }
-
